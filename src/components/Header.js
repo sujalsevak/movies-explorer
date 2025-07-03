@@ -124,11 +124,11 @@ const Header = ({ toggleTheme, currentTheme, onSearchQueryChange, currentSearchQ
       <ThemeToggleButton onClick={toggleTheme}> {/* RHS */}
         {currentTheme === 'light' ? (
           <>
-            ડાર્ક મોડ <MdDarkMode />
+            Dark Mode <MdDarkMode />
           </>
         ) : (
           <>
-            લાઇટ મોડ <MdLightMode />
+            Light Mode <MdLightMode />
           </>
         )}
       </ThemeToggleButton>
