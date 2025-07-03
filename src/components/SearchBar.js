@@ -1,12 +1,5 @@
 // src/components/SearchBar.js
 import React, { useEffect, useRef, useCallback } from "react";
-import styled from "styled-components";
-
-const ErrorMessage = styled.p`
-  color: red;
-  margin-top: 10px;
-  font-weight: bold;
-`;
 
 const SearchBar = ({ searchQuery, onSearchResults, onError }) => {
   const initialMount = useRef(true);
