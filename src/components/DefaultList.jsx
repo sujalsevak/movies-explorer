@@ -77,7 +77,7 @@ const DefaultList = () => {
       isMounted.current = true; // Mark as mounted
       getMovies(page); // Fetch initial movies for page 1
     }
-  }, []); // Empty dependency array means it runs only once on mount
+  }, [page]); // Empty dependency array means it runs only once on mount
 
   async function getMovies(pageNumber) {
     try {
