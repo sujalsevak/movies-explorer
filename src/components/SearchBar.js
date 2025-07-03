@@ -1,5 +1,5 @@
 // src/components/SearchBar.js
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import styled from "styled-components";
 
 const ErrorMessage = styled.p`
@@ -8,28 +8,11 @@ const ErrorMessage = styled.p`
   font-weight: bold;
 `;
 
-// SearchBar now accepts searchQuery, onSearchResults, and onError props from App.js
 const SearchBar = ({ searchQuery, onSearchResults, onError }) => {
-  const initialMount = useRef(true); // To prevent initial empty search
+  const initialMount = useRef(true);
 
-  useEffect(() => {
-    // Prevent immediate search on first render (when searchQuery is initially empty)
-    if (initialMount.current) {
-      initialMount.current = false;
-      return;
-    }
-
-    // Only search if query is not empty
-    if (searchQuery.trim() !== "") {
-      searchMovie(searchQuery);
-    } else {
-      // Clear results and errors if search query becomes empty
-      onSearchResults([]);
-      onError("");
-    }
-  }, [searchQuery]); // Re-run effect when searchQuery changes
-
-  async function searchMovie(query) {
+  // useCallback ensures 'searchMovie' has a stable identity across renders
+  const searchMovie = useCallback(async (query) => {
     try {
       const response = await fetch(
         `https://api.themoviedb.org/3/search/movie?api_key=f43ec82a5f24fe6190891894b7436c7a&query=${query}`
@@ -37,24 +20,33 @@ const SearchBar = ({ searchQuery, onSearchResults, onError }) => {
 
       if (response.ok) {
         const data = await response.json();
-        onSearchResults(data.results); // Pass results up to App.js
-        onError(""); // Clear any previous error
+        onSearchResults(data.results);
+        onError("");
       } else {
-        onSearchResults([]); // Clear results on error
+        onSearchResults([]);
         onError("Failed to fetch movies.");
       }
     } catch (error) {
-      onSearchResults([]); // Clear results on error
+      onSearchResults([]);
       onError("An error occurred while fetching movies.");
     }
-  }
+  }, [onSearchResults, onError]);
 
-  return (
-    // This component no longer renders UI elements directly,
-    // it just handles the search logic based on the searchQuery prop.
-    // Error message will be displayed in App.js
-    <></>
-  );
+  useEffect(() => {
+    if (initialMount.current) {
+      initialMount.current = false;
+      return;
+    }
+
+    if (searchQuery.trim() !== "") {
+      searchMovie(searchQuery);
+    } else {
+      onSearchResults([]);
+      onError("");
+    }
+  }, [searchQuery, searchMovie, onSearchResults, onError]);
+
+  return <></>;
 };
 
 export default SearchBar;
